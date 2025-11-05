@@ -1,0 +1,70 @@
+from __future__ import annotations
+
+from enum import StrEnum
+
+from pydantic import Field, computed_field, model_validator
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class AiModelType(StrEnum):
+    """Enumeration for supported AI model types."""
+
+    OPENAI = "openai"
+    GROK = "grok"
+
+
+class AppConfig(BaseSettings):
+    """
+    Defines the configuration schema required by the application.
+    """
+
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+
+    # -------------------------- AI Model Configuration -------------------------- #
+    active_model: AiModelType = Field(description="The AI model currently in use.")
+    
+    available_models: dict[AiModelType, str] = Field(
+        default_factory=dict,
+        description="Mapping of AI provider to concrete model name/id.",
+    )
+
+    openai_api_key: str | None = Field(default=None, description="API key for OpenAI models.")
+    grok_api_key: str | None = Field(default=None, description="API key for Grok models.")
+
+    ai_model_connection_timeout: int = Field(
+        default=600, description="Timeout in seconds for AI model connections."
+    )
+
+    # --------------------- Messaging Platform Configuration --------------------- #
+    line_channel_id: str | None = Field(
+        default=None, description="Access token for the LINE Messaging API."
+    )
+    line_channel_secret: str | None = Field(
+        default=None, description="Secret for LINE Messaging API webhook validation."
+    )
+
+    # --------------------------- Application Behavior --------------------------- #
+    log_level: str | int = Field(
+        default="INFO",
+        description="Logging level for the application (e.g., 'DEBUG', 10).",
+    )
+
+
+    # TODO: 計算不該在這裡
+    @model_validator(mode='after')
+    def _validate_active_model_present(self) -> 'AppConfig':
+        if self.available_models and self.active_model not in self.available_models:
+            raise ValueError(
+                f'active_model={self.active_model} is not present in available_models keys: {list(self.available_models)}'
+            )
+        return self
+
+    @computed_field
+    def active_model_name(self) -> str:
+        # Convenience accessor for the concrete model id/name of the active provider.
+        try:
+            return self.available_models[self.active_model]
+        except KeyError as exc:
+            raise KeyError(
+                f'No model mapping for active_model={self.active_model!s}. Please configure available_models.'
+            ) from exc

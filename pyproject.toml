@@ -1,0 +1,31 @@
+[project]
+name = "chat-friend"
+version = "0.1.0"
+description = "A friendly AI chat assistant for WhatsApp and Line"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "dependency-injector>=4.48.2",
+    "fastapi>=0.121.0",
+    "httpx>=0.28.1",
+    "loguru>=0.7.3",
+    "openai>=2.7.0",
+    "pydantic>=2.12.3",
+    "pydantic-settings>=2.11.0",
+    "pyyaml>=6.0.3",
+]
+
+[dependency-groups]
+dev = [
+    "pathspec>=0.12.1",
+ "rich>=14.2.0",
+ "ruff>=0.14.3",
+ "uvicorn>=0.38.0",
+]
+
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.black]
+line-length = 110
