@@ -33,3 +33,9 @@ class LoguruAdapter(ILoggingPort):
 
     def error(self, message: str) -> None:
         self._logger.error(message)
+
+    def success(self, message: str) -> None:
+        self._logger.success(message)
+
+    def trace(self, message: str) -> None:
+        self._logger.trace(message)

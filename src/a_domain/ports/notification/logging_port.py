@@ -50,3 +50,11 @@ class ILoggingPort(Protocol):
         :param kwargs: Additional key-value context for structured logging.
         """
         ...
+
+    def success(self, message: str):
+        """Logs a message indicating a successful operation."""
+        ...
+
+    def trace(self, message: str):
+        """Logs a message for fine-grained tracing, lower than DEBUG."""
+        ...

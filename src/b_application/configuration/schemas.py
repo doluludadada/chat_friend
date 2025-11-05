@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import StrEnum
 
-from pydantic import Field, computed_field, model_validator
+from pydantic import computed_field, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -22,23 +22,18 @@ class AppConfig(BaseSettings):
 
     # -------------------------- AI Model Configuration -------------------------- #
     active_model: AiModelType = Field(description="The AI model currently in use.")
-    
     available_models: dict[AiModelType, str] = Field(
         default_factory=dict,
         description="Mapping of AI provider to concrete model name/id.",
     )
-
     openai_api_key: str | None = Field(default=None, description="API key for OpenAI models.")
     grok_api_key: str | None = Field(default=None, description="API key for Grok models.")
-
     ai_model_connection_timeout: int = Field(
-        default=600, description="Timeout in seconds for AI model connections."
+        default=60, description="Timeout in seconds for AI model connections."
     )
 
     # --------------------- Messaging Platform Configuration --------------------- #
-    line_channel_id: str | None = Field(
-        default=None, description="Access token for the LINE Messaging API."
-    )
+    line_channel_id: str | None = Field(default=None, description="Access token for the LINE Messaging API.")
     line_channel_secret: str | None = Field(
         default=None, description="Secret for LINE Messaging API webhook validation."
     )
@@ -49,13 +44,12 @@ class AppConfig(BaseSettings):
         description="Logging level for the application (e.g., 'DEBUG', 10).",
     )
 
-
     # TODO: 計算不該在這裡
-    @model_validator(mode='after')
-    def _validate_active_model_present(self) -> 'AppConfig':
+    @model_validator(mode="after")
+    def _validate_active_model_present(self) -> "AppConfig":
         if self.available_models and self.active_model not in self.available_models:
             raise ValueError(
-                f'active_model={self.active_model} is not present in available_models keys: {list(self.available_models)}'
+                f"active_model={self.active_model} is not present in available_models keys: {list(self.available_models)}"
             )
         return self
 
@@ -66,5 +60,5 @@ class AppConfig(BaseSettings):
             return self.available_models[self.active_model]
         except KeyError as exc:
             raise KeyError(
-                f'No model mapping for active_model={self.active_model!s}. Please configure available_models.'
+                f"No model mapping for active_model={self.active_model!s}. Please configure available_models."
             ) from exc
