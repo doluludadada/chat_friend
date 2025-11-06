@@ -25,7 +25,7 @@ class ConversationUsecase:
         self._logger = logging_port
 
     async def execute(self, user_id: str, incoming_content: str) -> Message | None:
-        self._logger.info(f"Starting to handle new message for user_id: {user_id}")
+        self._logger.trace(f'Use case execution started for user_id: {user_id} with content: "{incoming_content}"')
 
         try:
             # 1. Get existing conversation or create a new one
@@ -38,14 +38,10 @@ class ConversationUsecase:
 
             # 3. Generate a reply using the AI port
             self._logger.debug(f"Generating AI reply for user_id: {user_id}")
-            assistant_message = await self._ai_port.generate_reply(
-                messages=conversation_with_user_msg.messages
-            )
+            assistant_message = await self._ai_port.generate_reply(messages=conversation_with_user_msg.messages)
 
             # 4. Add the assistant's reply to the conversation
-            final_conversation = self._add_message_to_conversation(
-                conversation_with_user_msg, assistant_message
-            )
+            final_conversation = self._add_message_to_conversation(conversation_with_user_msg, assistant_message)
 
             # 5. Save the final state of the conversation
             await self._repository_port.save(final_conversation)
@@ -53,7 +49,7 @@ class ConversationUsecase:
 
             # 6. Send the reply back to the user via the platform port
             await self._platform_port.send_message(user_id, assistant_message)
-            self._logger.info(f"Reply sent successfully to user_id: {user_id}")
+            self._logger.success(f"Successfully processed and replied to user_id: {user_id}")
 
             return assistant_message
 

@@ -5,3 +5,7 @@ dev-sync:
 
 format:
 	uv run ruff format
+
+ngrok:
+    ngrok http 8000
+

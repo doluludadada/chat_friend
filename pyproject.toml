@@ -13,15 +13,19 @@ dependencies = [
     "pydantic>=2.12.3",
     "pydantic-settings>=2.11.0",
     "pyyaml>=6.0.3",
+    "uvicorn>=0.38.0",
 ]
 
 [dependency-groups]
-dev = ["pathspec>=0.12.1", "rich>=14.2.0", "ruff>=0.14.3", "uvicorn>=0.38.0"]
+dev = ["pathspec>=0.12.1", "rich>=14.2.0", "ruff>=0.14.3", "ufmt>=2.9.0"]
 
 
 [tool.ruff.lint.mccabe]
 max-complexity = 10
 
+
+[tool.ufmt]
+formatter = "black"
 
 [tool.black]
 line-length = 120

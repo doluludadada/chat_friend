@@ -1,36 +1,46 @@
-from typing import Awaitable
-
 from src.a_domain.ports.bussiness.ai_port import AiPort
 from src.a_domain.ports.notification.logging_port import ILoggingPort
 from src.b_application.configuration.schemas import AiModelType, AppConfig
-from src.c_infrastructure.ai_models.grok_adapter import GrokAdapter
-from src.c_infrastructure.ai_models.openai_adapter import OpenAIAdapter
+from src.c_infrastructure.ai_models.ai_adapter.grok_adapter import GrokAdapter
+from src.c_infrastructure.ai_models.ai_adapter.openai_adapter import OpenAIAdapter
 
 
-async def build_ai_adapter(
-    config: AppConfig,
-    logger: ILoggingPort,
-    *,
-    override_provider: AiModelType | None = None,
-    override_model_id: str | None = None,
-) -> AiPort:
-    provider = override_provider or config.active_model
-    model_id = override_model_id or config.available_models.get(provider)
+class AiAdapterFactory:
+    """
+    Factory class responsible for creating AI model adapter instances based on configuration.
+    """
 
-    if model_id is None:
-        raise ValueError(
-            f"No model id resolved for provider {provider!s}. "
-            f"Configure available_models or enable remote catalogue."
-        )
+    def __init__(self, config: AppConfig, logger: ILoggingPort):
+        self._config = config
+        self._logger = logger
+        self._logger.trace(f"AI Adapter Factory initialised. Active model provider: {self._config.active_model.value}")
 
-    if provider == AiModelType.OPENAI:
-        if not config.openai_api_key:
-            raise ValueError("Missing openai_api_key.")
-        return OpenAIAdapter(api_key=config.openai_api_key, logger=logger, config=config, model=model_id)
+    def create_adapter(
+        self, *, override_provider: AiModelType | None = None, override_model_name: str | None = None
+    ) -> AiPort:
+        provider = override_provider or self._config.active_model
+        model_name = override_model_name or self._config.available_models.get(provider)
 
-    if provider == AiModelType.GROK:
-        if not config.grok_api_key:
-            raise ValueError("Missing grok_api_key.")
-        return GrokAdapter(api_key=config.grok_api_key, logger=logger, config=config, model=model_id)
+        if model_name is None:
+            raise ValueError(
+                f"No model id resolved for provider {provider!s}. "
+                "Configure available_models or enable remote catalogue."
+            )
 
-    raise ValueError(f"Unsupported provider: {provider!s}")
+        self._logger.debug(f"Creating AI adapter for provider: {provider.value} with model: {model_name}")
+
+        if provider == AiModelType.OPENAI:
+            return OpenAIAdapter(
+                config=self._config,
+                logger=self._logger,
+                model_name=model_name,
+            )
+
+        if provider == AiModelType.GROK:
+            return GrokAdapter(
+                config=self._config,
+                logger=self._logger,
+                model_name=model_name,
+            )
+
+        raise ValueError(f"Unsupported provider: {provider!s}")

@@ -4,7 +4,7 @@ from loguru import logger
 from src.a_domain.ports.notification.logging_port import ILoggingPort
 
 
-class LoguruAdapter(ILoggingPort):
+class LogggerAdapter(ILoggingPort):
     def __init__(self, level: str | int = "INFO"):
         logger.remove()
         logger.add(

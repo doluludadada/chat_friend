@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from enum import StrEnum
+from pathlib import Path
 
 from pydantic import computed_field, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -19,6 +20,7 @@ class AppConfig(BaseSettings):
     """
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    project_root: Path
 
     # -------------------------- AI Model Configuration -------------------------- #
     active_model: AiModelType = Field(description="The AI model currently in use.")
@@ -28,15 +30,14 @@ class AppConfig(BaseSettings):
     )
     openai_api_key: str | None = Field(default=None, description="API key for OpenAI models.")
     grok_api_key: str | None = Field(default=None, description="API key for Grok models.")
-    ai_model_connection_timeout: int = Field(
-        default=60, description="Timeout in seconds for AI model connections."
-    )
+    ai_model_connection_timeout: int = Field(default=60, description="Timeout in seconds for AI model connections.")
 
     # --------------------- Messaging Platform Configuration --------------------- #
     line_channel_id: str | None = Field(default=None, description="Access token for the LINE Messaging API.")
     line_channel_secret: str | None = Field(
         default=None, description="Secret for LINE Messaging API webhook validation."
     )
+    line_channel_access_token: str | None = Field(default=None, description="Access token for the LINE Messaging API.")
 
     # --------------------------- Application Behavior --------------------------- #
     log_level: str | int = Field(
