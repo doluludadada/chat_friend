@@ -1,5 +1,5 @@
 import uvicorn
-from src.d_presentation.web.app_factory import create_app
+from src.d_presentation.web.app import create_app
 
 app = create_app()
 

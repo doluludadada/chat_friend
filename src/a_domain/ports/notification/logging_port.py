@@ -11,7 +11,6 @@ class ILoggingPort(Protocol):
         Log an info-level message with optional structured context.
 
         :param message: The message to log.
-        :param kwargs: Additional key-value context for structured logging.
         """
         ...
 
@@ -20,7 +19,6 @@ class ILoggingPort(Protocol):
         Log a warning-level message with optional structured context.
 
         :param message: The message to log.
-        :param kwargs: Additional key-value context for structured logging.
         """
         ...
 
@@ -29,7 +27,6 @@ class ILoggingPort(Protocol):
         Log a debug-level message with optional structured context.
 
         :param message: The message to log.
-        :param kwargs: Additional key-value context for structured logging.
         """
         ...
 
@@ -38,7 +35,6 @@ class ILoggingPort(Protocol):
         Log a critical-level message with optional structured context.
 
         :param message: The message to log.
-        :param kwargs: Additional key-value context for structured logging.
         """
         ...
 
@@ -47,7 +43,6 @@ class ILoggingPort(Protocol):
         Log an error-level message with optional structured context.
 
         :param message: The message to log.
-        :param kwargs: Additional key-value context for structured logging.
         """
         ...
 
@@ -57,4 +52,10 @@ class ILoggingPort(Protocol):
 
     def trace(self, message: str):
         """Logs a message for fine-grained tracing, lower than DEBUG."""
+        ...
+
+    def exception(self, message: str):
+        """
+        Log an exception message, including a stack trace, with optional structured context.
+        """
         ...

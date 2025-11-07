@@ -4,14 +4,14 @@ from loguru import logger
 from src.a_domain.ports.notification.logging_port import ILoggingPort
 
 
-class LogggerAdapter(ILoggingPort):
+class LoggerService(ILoggingPort):
     def __init__(self, level: str | int = "INFO"):
         logger.remove()
         logger.add(
             sys.stderr,
             level=level,
             format=(
-                "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
+                "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | "
                 "<level>{level: <8}</level> | "
                 "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
                 "<level>{message}</level>"
