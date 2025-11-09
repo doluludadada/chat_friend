@@ -2,15 +2,8 @@ active_model: grok # Switch to 'grok'
 
 available_models:
   openai: gpt-5-mini # Or any valid OpenAI model
-  grok: grok-4-fast-non-reasioning
-
-openai_api_key:
-grok_api_key:
+  grok: grok-4-fast-non-reasoning
 
 ai_model_connection_timeout: 600
-
-line_channel_id: ""
-line_channel_secret: ""
-line_channel_access_token: ""
 
 log_level: INFO

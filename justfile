@@ -1,7 +1,10 @@
 set windows-shell := ["powershell", "-Command"]
 
+active_venv:
+    .venv\Scripts\Activate.ps1
+    
 dev-sync:
-    uv sync --all-extras --cache-dir .uv_cache
+    uv sync --all-extras
 
 format:
 	uv run ruff format
@@ -11,3 +14,4 @@ ngrok:
 
 run:
     uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+

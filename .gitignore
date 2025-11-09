@@ -15,3 +15,4 @@ wheels/
 /.last_conversation.json
 /.uv_cache
 /config/appsetting.dev.yaml
+/scan.py

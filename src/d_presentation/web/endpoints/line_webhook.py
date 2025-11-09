@@ -8,7 +8,7 @@ from src.d_presentation.container import Container
 router = APIRouter()
 
 
-@router.post("/")
+@router.post("")
 @inject
 async def handle_line_webhook(
     request: Request,

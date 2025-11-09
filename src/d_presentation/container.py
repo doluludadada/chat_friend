@@ -29,8 +29,9 @@ class Container(containers.DeclarativeContainer):
         ConversationUsecase,
         ai_port=ai_port,
         repository_port=repository_port,
-        platform_port=platform_port, 
+        platform_port=platform_port,
         logging_port=logging,
+        config=config,
     )
 
     line_security_service = providers.Factory(
