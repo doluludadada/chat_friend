@@ -30,16 +30,23 @@ class GrokAdapter(BaseAIAdapter):
             timeout=httpx.Timeout(self._config.ai_model_connection_timeout),
         )
 
-    async def _call_api(self, messages: tuple[Message, ...]):
-        """Calls the Grok Chat Completions API."""
+    async def _call_api(self, messages: tuple[Message, ...]) -> str:
         api_messages = self._convert_to_api_format(messages)
         try:
-            response = await self._client.chat.completions.create(
+            stream = await self._client.chat.completions.create(
                 model=self._model_name,
                 messages=api_messages,
                 temperature=0.7,
+                stream=True,
             )
-            return response.choices[0].message.content or ""
+
+            full_content = ""
+            async for chunk in stream:
+                content_delta = chunk.choices[0].delta.content or ""
+                full_content += content_delta
+
+            return full_content
+
         except OpenAIError as e:
             self._logger.error(f"Grok API error for model {self._model_name}: {e}")
             return "I'm sorry, I'm having trouble connecting to Grok right now. Please try again in a moment."

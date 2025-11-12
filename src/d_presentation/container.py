@@ -7,6 +7,7 @@ from src.c_infrastructure.persistence.inmemory_repository import InMemoryReposit
 from src.c_infrastructure.platforms.line.line_adapter import LinePlatformAdapter
 from src.c_infrastructure.platforms.line.line_handler import LineWebhookHandler
 from src.c_infrastructure.platforms.line.line_security import LineSecurityService
+from src.c_infrastructure.services.chat_styler_service import ChatStylerService
 from src.c_infrastructure.services.logger_service import LoggerService
 
 
@@ -24,12 +25,14 @@ class Container(containers.DeclarativeContainer):
     repository_port = providers.Singleton(InMemoryRepositoryAdapter, logger=logging)
 
     platform_port = providers.Factory(LinePlatformAdapter, config=config, logger=logging)
+    chat_styler_port = providers.Factory(ChatStylerService)
 
     conversation_usecase = providers.Factory(
         ConversationUsecase,
         ai_port=ai_port,
         repository_port=repository_port,
         platform_port=platform_port,
+        styler_port=chat_styler_port,
         logging_port=logging,
         config=config,
     )

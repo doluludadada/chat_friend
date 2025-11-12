@@ -31,12 +31,19 @@ class OpenAIAdapter(BaseAIAdapter):
         """Calls the OpenAI Chat Completions API."""
         api_messages = self._convert_to_api_format(messages)
         try:
-            response = await self._client.chat.completions.create(
+            stream = await self._client.chat.completions.create(
                 model=self._model_name,
                 messages=api_messages,
                 temperature=0.7,
+                stream=True,
             )
-            return response.choices[0].message.content or ""
+
+            full_content = ""
+            async for chunk in stream:
+                content_delta = chunk.choices[0].delta.content or ""
+                full_content += content_delta
+
+            return full_content
         except OpenAIError as e:
             self._logger.error(f"OpenAI API error for model {self._model_name}: {e}")
             return "I'm sorry, I'm having trouble connecting to OpenAI right now. Please try again in a moment."
