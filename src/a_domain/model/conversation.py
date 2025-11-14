@@ -9,6 +9,7 @@ from src.a_domain.model.message import Message
 class Conversation:
     user_id: str
     id: UUID = field(default_factory=uuid4)
+    selected_model_name: str | None = None
     messages: tuple[Message, ...] = field(default_factory=tuple)
     created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))

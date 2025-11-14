@@ -1,6 +1,7 @@
 from src.a_domain.ports.bussiness.ai_port import AiPort
 from src.a_domain.ports.notification.logging_port import ILoggingPort
-from src.b_application.configuration.schemas import AiModelType, AppConfig
+from src.a_domain.types.enums import AiProvider
+from src.b_application.configuration.schemas import AppConfig
 from src.c_infrastructure.ai_models.ai_adapter.grok_adapter import GrokAdapter
 from src.c_infrastructure.ai_models.ai_adapter.openai_adapter import OpenAIAdapter
 
@@ -16,7 +17,7 @@ class AiAdapterFactory:
         self._logger.trace(f"AI Adapter Factory initialised. Active model provider: {self._config.active_model.value}")
 
     def create_adapter(
-        self, *, override_provider: AiModelType | None = None, override_model_name: str | None = None
+        self, *, override_provider: AiProvider | None = None, override_model_name: str | None = None
     ) -> AiPort:
         provider = override_provider or self._config.active_model
         model_name = override_model_name or self._config.available_models.get(provider)
@@ -29,14 +30,14 @@ class AiAdapterFactory:
 
         self._logger.debug(f"Creating AI adapter for provider: {provider.value} with model: {model_name}")
 
-        if provider == AiModelType.OPENAI:
+        if provider == AiProvider.OPENAI:
             return OpenAIAdapter(
                 config=self._config,
                 logger=self._logger,
                 model_name=model_name,
             )
 
-        if provider == AiModelType.GROK:
+        if provider == AiProvider.GROK:
             return GrokAdapter(
                 config=self._config,
                 logger=self._logger,

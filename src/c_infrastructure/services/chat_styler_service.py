@@ -35,17 +35,30 @@ class ChatStylerService(IChatStylerPort):
         text = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
         return text.strip()
 
+
     def _force_split_long_text(self, text: str) -> list[Message]:
         parts = []
         while len(text) > self._MAX_MESSAGE_LENGTH:
-            split_at = text.rfind("。", 0, self._MAX_MESSAGE_LENGTH)
+            possible_splits = [
+                text.rfind("。", 0, self._MAX_MESSAGE_LENGTH),
+                text.rfind(".", 0, self._MAX_MESSAGE_LENGTH),
+                text.rfind("！", 0, self._MAX_MESSAGE_LENGTH),
+                text.rfind("!", 0, self._MAX_MESSAGE_LENGTH),
+                text.rfind("？", 0, self._MAX_MESSAGE_LENGTH),
+                text.rfind("?", 0, self._MAX_MESSAGE_LENGTH),
+            ]
+
+            split_at = max(possible_splits)
+
+            if split_at == -1:
+                split_at = text.rfind(" ", 0, self._MAX_MESSAGE_LENGTH)
+
             if split_at == -1:
                 split_at = self._MAX_MESSAGE_LENGTH
 
-            parts.append(Message(role=MessageRole.ASSISTANT, content=text[: split_at + 1].strip()))
-            text = text[split_at + 1 :].strip()
+            parts.append(Message(role=MessageRole.ASSISTANT, content=text[:split_at].strip()))
+            text = text[split_at:].strip()
 
         if text:
             parts.append(Message(role=MessageRole.ASSISTANT, content=text))
-
         return parts

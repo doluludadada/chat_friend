@@ -1,13 +1,8 @@
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from enum import Enum
 from uuid import UUID, uuid4
 
-
-class MessageRole(Enum):
-    USER = "user"
-    ASSISTANT = "assistant"
-    SYSTEM = "system"
+from src.a_domain.types.enums import MessageRole
 
 
 @dataclass(frozen=True, kw_only=True)

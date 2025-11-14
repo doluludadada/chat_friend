@@ -1,17 +1,11 @@
 from __future__ import annotations
 
-from enum import StrEnum
 from pathlib import Path
 
 from pydantic import computed_field, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
-class AiModelType(StrEnum):
-    """Enumeration for supported AI model types."""
-
-    OPENAI = "openai"
-    GROK = "grok"
+from src.a_domain.types.enums import AiProvider
 
 
 class AppConfig(BaseSettings):
@@ -24,8 +18,8 @@ class AppConfig(BaseSettings):
 
     # -------------------------- AI Model Configuration -------------------------- #
 
-    active_model: AiModelType = Field(description="The AI model currently in use.")
-    available_models: dict[AiModelType, str] = Field(
+    active_model: AiProvider = Field(description="The AI model currently in use.")
+    available_models: dict[AiProvider, str] = Field(
         default_factory=dict,
         description="Mapping of AI provider to concrete model name/id.",
     )
