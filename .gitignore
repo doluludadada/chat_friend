@@ -16,3 +16,4 @@ wheels/
 /.uv_cache
 /config/appsetting.dev.yaml
 /scan.py
+/test/rsa.py

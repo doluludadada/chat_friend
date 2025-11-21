@@ -10,8 +10,8 @@ format:
 	uv run ruff format
 
 ngrok:
-    ngrok http 8000
+    ngrok http 8800
 
 run:
-    uv run uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    uv run uvicorn main:app --host 0.0.0.0 --port 8800 --reload
 

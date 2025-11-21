@@ -39,3 +39,5 @@ class LoggerService(ILoggingPort):
 
     def trace(self, message: str) -> None:
         self._logger.trace(message)
+    def exception(self, message: str) -> None:
+        self._logger.exception(message)
