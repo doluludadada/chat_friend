@@ -1,0 +1,20 @@
+# Git
+.git
+.gitignore
+
+# Python / UV
+__pycache__
+*.py[cod]
+*$py.class
+.venv
+uv.lock
+
+# Data & Config
+chroma_data/
+chroma_db/
+.env
+.env.*
+
+# IDEs
+.vscode
+.idea

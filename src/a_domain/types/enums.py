@@ -1,4 +1,3 @@
-
 from enum import StrEnum
 
 
@@ -11,3 +10,8 @@ class MessageRole(StrEnum):
 class AiProvider(StrEnum):
     OPENAI = "openai"
     GROK = "grok"
+
+
+class DatabaseProvider(StrEnum):
+    MEMORY = "memory"
+    CHROMA = "chroma"

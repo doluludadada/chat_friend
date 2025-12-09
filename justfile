@@ -15,3 +15,5 @@ ngrok:
 run:
     uv run uvicorn main:app --host 0.0.0.0 --port 8800 --reload
 
+runui:
+    uv run -m src.d_presentation.desktop.app

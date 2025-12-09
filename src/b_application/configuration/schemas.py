@@ -5,7 +5,7 @@ from pathlib import Path
 from pydantic import computed_field, Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from src.a_domain.types.enums import AiProvider
+from src.a_domain.types.enums import AiProvider, DatabaseProvider
 
 
 class AppConfig(BaseSettings):
@@ -42,6 +42,14 @@ class AppConfig(BaseSettings):
         default="INFO",
         description="Logging level for the application (e.g., 'DEBUG', 10).",
     )
+
+    # ---------------------------------------------------------------------------- #
+    #                                  DB Setting                                  #
+    # ---------------------------------------------------------------------------- #
+    database_provider: DatabaseProvider = Field(
+        default=DatabaseProvider.MEMORY, description="The persistence layer to use."
+    )
+    chroma_persist_path: str = Field(default="chroma_db", description="Path to store ChromaDB data locally.")
 
     # TODO: Move to somewhere.
 
