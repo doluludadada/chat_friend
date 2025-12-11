@@ -1,6 +1,7 @@
 import asyncio
 
 import httpx
+import google.generativeai as genai
 from openai import AsyncOpenAI, OpenAIError
 from src.a_domain.ports.bussiness.model_catalog_port import ModelCatalogPort
 from src.a_domain.ports.notification.logging_port import ILoggingPort
@@ -61,6 +62,23 @@ class ModelsCatalog(ModelCatalogPort):
             self._logger.critical(f"Unexpected error fetching Grok models: {e}")
             return tuple()
 
+    async def _fetch_gemini_models(self) -> tuple[str, ...]:
+        if not getattr(self._config, "gemini_api_key", None):
+            self._logger.debug("Gemini API key not configured. Skipping model fetch.")
+            return tuple()
+
+        self._logger.debug("Fetching models from Gemini...")
+        try:
+            genai.configure(api_key=self._config.gemini_api_key)
+            # 若 library 提供列出模型的同步 API，用 to_thread 包裝
+            resp = await asyncio.to_thread(lambda: getattr(genai, "list_models", lambda: [])())
+            # 依 resp 的形狀解析，回傳 tuple of ids
+            ids = tuple(getattr(m, "name", str(m)) for m in resp or [])
+            return ids
+        except Exception as e:
+            self._logger.error(f"Gemini API error while listing models: {e}")
+            return tuple()
+        
     async def list_chat_models(self) -> tuple[str, ...]:
         """
         Concurrently fetches chat models from all configured providers and returns a combined list.

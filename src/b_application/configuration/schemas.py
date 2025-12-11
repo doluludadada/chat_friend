@@ -12,6 +12,7 @@ class AiModelType(StrEnum):
 
     OPENAI = "openai"
     GROK = "grok"
+    GEMINI = "gemini"
 
 
 class AppConfig(BaseSettings):
@@ -31,6 +32,7 @@ class AppConfig(BaseSettings):
     )
     openai_api_key: str | None = Field(default=None, description="API key for OpenAI models.")
     grok_api_key: str | None = Field(default=None, description="API key for Grok models.")
+    gemini_api_key: str | None = Field(default=None, description="API key for Gemini models.")
     ai_model_connection_timeout: int = Field(default=60, description="Timeout in seconds for AI model connections.")
     ai_system_prompt: str | None = Field(default=None, description="The system prompt defining the AI personality.")
 
