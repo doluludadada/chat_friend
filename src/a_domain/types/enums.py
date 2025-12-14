@@ -10,6 +10,7 @@ class MessageRole(StrEnum):
 class AiProvider(StrEnum):
     OPENAI = "openai"
     GROK = "grok"
+    GEMINI = "gemini"
 
 
 class DatabaseProvider(StrEnum):

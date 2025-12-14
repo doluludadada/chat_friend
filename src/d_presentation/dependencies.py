@@ -21,8 +21,12 @@ from src.c_infrastructure.ai_models.factory import AiAdapterFactory
 from src.c_infrastructure.config.loader import load_settings
 
 # Adapters & Services
-from src.c_infrastructure.persistence.chroma.chroma_repository import ChromaRepositoryAdapter
-from src.c_infrastructure.persistence.inmemory_repository import InMemoryRepositoryAdapter
+from src.c_infrastructure.persistence.chroma.chroma_repository import (
+    ChromaRepositoryAdapter,
+)
+from src.c_infrastructure.persistence.inmemory_repository import (
+    InMemoryRepositoryAdapter,
+)
 from src.c_infrastructure.platforms.line.line_adapter import LinePlatformAdapter
 from src.c_infrastructure.platforms.line.line_handler import LineWebhookHandler
 from src.c_infrastructure.platforms.line.line_security import LineSecurityService
@@ -38,22 +42,25 @@ def get_settings() -> AppConfig:
 
 
 @lru_cache
-def get_logger(settings: AppConfig = Depends(get_settings)) -> ILoggingPort:
+def get_logger() -> ILoggingPort:
+    settings = get_settings()
     return LoggerService(level=settings.log_level)
 
 
 @lru_cache
-def get_repository(
-    settings: AppConfig = Depends(get_settings), logger: ILoggingPort = Depends(get_logger)
-) -> RepositoryPort:
+def get_repository() -> RepositoryPort:
+    # Call dependencies directly inside to keep signature clean for lru_cache
+    settings = get_settings()
+    logger = get_logger()
 
     if settings.database_provider == DatabaseProvider.CHROMA:
         return ChromaRepositoryAdapter(config=settings, logger=logger)
-
     if settings.database_provider == DatabaseProvider.MEMORY:
         return InMemoryRepositoryAdapter(logger=logger)
 
-    logger.warning(f"Unknown database provider '{settings.database_provider}'. Falling back to InMemory.")
+    logger.warning(
+        f"Unknown database provider '{settings.database_provider}'. Falling back to InMemory."
+    )
     return InMemoryRepositoryAdapter(logger=logger)
 
 
@@ -62,13 +69,17 @@ def get_styler() -> IChatStylerPort:
     return ChatStylerService()
 
 
-def get_platform_adapter(
-    settings: AppConfig = Depends(get_settings), logger: ILoggingPort = Depends(get_logger)
-) -> PlatformPort:
+@lru_cache
+def get_platform_adapter() -> PlatformPort:
+    settings = get_settings()
+    logger = get_logger()
     return LinePlatformAdapter(config=settings, logger=logger)
 
 
-def get_ai_adapter(settings: AppConfig = Depends(get_settings), logger: ILoggingPort = Depends(get_logger)) -> AiPort:
+@lru_cache
+def get_ai_adapter() -> AiPort:
+    settings = get_settings()
+    logger = get_logger()
     factory = AiAdapterFactory(config=settings, logger=logger)
     return factory.create_adapter()
 
@@ -93,13 +104,15 @@ def get_ai_processor(
 
 
 def get_state_manager(
-    repo: RepositoryPort = Depends(get_repository), logger: ILoggingPort = Depends(get_logger)
+    repo: RepositoryPort = Depends(get_repository),
+    logger: ILoggingPort = Depends(get_logger),
 ) -> StateManager:
     return StateManager(repository=repo, logger=logger)
 
 
 def get_dispatcher(
-    platform: PlatformPort = Depends(get_platform_adapter), logger: ILoggingPort = Depends(get_logger)
+    platform: PlatformPort = Depends(get_platform_adapter),
+    logger: ILoggingPort = Depends(get_logger),
 ) -> Dispatcher:
     return Dispatcher(platform=platform, logger=logger)
 
@@ -113,16 +126,21 @@ def get_chat_pipeline(
 ) -> Pipeline:
     return Pipeline(loader, processor, manager, dispatcher, config)
 
+
 # --- Webhook Handler ---
 
 
 def get_line_security(
-    settings: AppConfig = Depends(get_settings), logger: ILoggingPort = Depends(get_logger)
+    settings: AppConfig = Depends(get_settings),
+    logger: ILoggingPort = Depends(get_logger),
 ) -> LineSecurityService:
-    return LineSecurityService(channel_secret=settings.line_channel_secret, logger=logger)
+    return LineSecurityService(
+        channel_secret=settings.line_channel_secret, logger=logger
+    )
 
 
 def get_line_handler(
-    security: LineSecurityService = Depends(get_line_security), pipeline: Pipeline = Depends(get_chat_pipeline)
+    security: LineSecurityService = Depends(get_line_security),
+    pipeline: Pipeline = Depends(get_chat_pipeline),
 ) -> LineWebhookHandler:
     return LineWebhookHandler(security_service=security, pipeline=pipeline)

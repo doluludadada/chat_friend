@@ -4,6 +4,7 @@ from src.a_domain.types.enums import AiProvider
 from src.b_application.configuration.schemas import AppConfig
 from src.c_infrastructure.ai_models.ai_adapter.grok_adapter import GrokAdapter
 from src.c_infrastructure.ai_models.ai_adapter.openai_adapter import OpenAIAdapter
+from src.c_infrastructure.ai_models.ai_adapter.gemini_adapter import GeminiAIAdapter
 
 
 class AiAdapterFactory:
@@ -44,4 +45,10 @@ class AiAdapterFactory:
                 model_name=model_name,
             )
 
+        if provider == AiModelType.GEMINI:
+            return GeminiAIAdapter(
+                config=self._config,
+                logger=self._logger,
+                model_name=model_name,
+            )
         raise ValueError(f"Unsupported provider: {provider!s}")
