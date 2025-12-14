@@ -37,6 +37,8 @@ WORKDIR /app
 COPY src ./src
 COPY config ./config
 COPY main.py .
+COPY pyproject.toml . 
+
 
 # Create a non-root user for security
 RUN useradd -m appuser && chown -R appuser:appuser /app
