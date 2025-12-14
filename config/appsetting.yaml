@@ -1,8 +1,9 @@
-active_model: grok
+active_model: gemini
 ai_model_connection_timeout: 600
 available_models:
   grok: grok-4-1-fast-non-reasoning
   openai: gpt-5-mini
+  gemini: gemini-2.5-flash
 chroma_persist_path: ./chroma_data
 database_provider: chroma
 log_level: INFO

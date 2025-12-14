@@ -45,7 +45,7 @@ class AiAdapterFactory:
                 model_name=model_name,
             )
 
-        if provider == AiModelType.GEMINI:
+        if provider == AiProvider.GEMINI:
             return GeminiAIAdapter(
                 config=self._config,
                 logger=self._logger,
