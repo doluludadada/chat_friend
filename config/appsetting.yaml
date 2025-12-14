@@ -1,11 +1,10 @@
-active_model: grok # Switch to 'grok'
-
-available_models:
-  openai: gpt-5-mini # Or any valid OpenAI model
-  grok: grok-4-1-fast-non-reasoning
-
+active_model: grok
 ai_model_connection_timeout: 600
-
+available_models:
+  grok: grok-4-1-fast-non-reasoning
+  openai: gpt-5-mini
+chroma_persist_path: ./chroma_data
+database_provider: chroma
 log_level: INFO
 
 reset_commands:

@@ -1,0 +1,31 @@
+services:
+  backend:
+    container_name: chat-friend-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    # Map host port 8800 to container port 8800
+    ports:
+      - "8800:8800"
+
+    # Environment variables (loads from .env file automatically)
+    env_file:
+      - .env
+
+    # Hot-swapping configuration and persistence
+    volumes:
+      # Mount config so you can change AI models without rebuilding (Hot-Swappable target)
+      - ./config:/app/config
+      # Persist ChromaDB data
+      - ./chroma_data:/app/chroma_data
+
+    # Restart policy
+    restart: unless-stopped
+
+    # Healthcheck to ensure the service is up
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8800/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

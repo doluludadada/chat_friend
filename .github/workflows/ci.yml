@@ -1,0 +1,38 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    name: Run Tests & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v5
+      with:
+        enable-cache: true
+        cache-dependency-glob: "uv.lock"
+
+    - name: Set up Python 3.13
+      run: uv python install 3.13
+
+    - name: Install dependencies
+      # Installs the project + dev dependencies defined in pyproject.toml
+      run: uv sync --all-extras --dev
+
+    - name: Lint with Ruff
+      run: uv run ruff check .
+
+    - name: Check formatting with Black
+      run: uv run black --check .
+
+    - name: Run Pytest
+      run: uv run pytest tests/

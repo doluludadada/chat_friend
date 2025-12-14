@@ -7,14 +7,11 @@ from src.a_domain.ports.bussiness.platform_port import PlatformPort
 from src.a_domain.ports.bussiness.repository_port import RepositoryPort
 
 # Ports
-
-
 from src.a_domain.ports.notification.logging_port import ILoggingPort
-from src.b_application.configuration.schemas import AppConfig
 
 # Configurations
-
-
+from src.a_domain.types.enums import DatabaseProvider
+from src.b_application.configuration.schemas import AppConfig
 from src.b_application.pipeline import Pipeline
 from src.b_application.use_cases.collect.context_loader import ContextLoader
 from src.b_application.use_cases.process.ai_processor import AiProcessor
@@ -22,15 +19,14 @@ from src.b_application.use_cases.ship.dispatcher import Dispatcher
 from src.b_application.use_cases.ship.state_manager import StateManager
 from src.c_infrastructure.ai_models.factory import AiAdapterFactory
 from src.c_infrastructure.config.loader import load_settings
+
+# Adapters & Services
+from src.c_infrastructure.persistence.chroma.chroma_repository import ChromaRepositoryAdapter
 from src.c_infrastructure.persistence.inmemory_repository import InMemoryRepositoryAdapter
 from src.c_infrastructure.platforms.line.line_adapter import LinePlatformAdapter
 from src.c_infrastructure.platforms.line.line_handler import LineWebhookHandler
 from src.c_infrastructure.platforms.line.line_security import LineSecurityService
 from src.c_infrastructure.services.chat_styler_service import ChatStylerService
-
-# Adapters & Services
-
-
 from src.c_infrastructure.services.logger_service import LoggerService
 
 # Pipeline Components
@@ -41,14 +37,27 @@ def get_settings() -> AppConfig:
     return load_settings()
 
 
+@lru_cache
 def get_logger(settings: AppConfig = Depends(get_settings)) -> ILoggingPort:
     return LoggerService(level=settings.log_level)
 
 
-def get_repository(logger: ILoggingPort = Depends(get_logger)) -> RepositoryPort:
+@lru_cache
+def get_repository(
+    settings: AppConfig = Depends(get_settings), logger: ILoggingPort = Depends(get_logger)
+) -> RepositoryPort:
+
+    if settings.database_provider == DatabaseProvider.CHROMA:
+        return ChromaRepositoryAdapter(config=settings, logger=logger)
+
+    if settings.database_provider == DatabaseProvider.MEMORY:
+        return InMemoryRepositoryAdapter(logger=logger)
+
+    logger.warning(f"Unknown database provider '{settings.database_provider}'. Falling back to InMemory.")
     return InMemoryRepositoryAdapter(logger=logger)
 
 
+@lru_cache
 def get_styler() -> IChatStylerPort:
     return ChatStylerService()
 
@@ -103,7 +112,6 @@ def get_chat_pipeline(
     config: AppConfig = Depends(get_settings),
 ) -> Pipeline:
     return Pipeline(loader, processor, manager, dispatcher, config)
-
 
 # --- Webhook Handler ---
 
