@@ -17,3 +17,4 @@ wheels/
 /config/appsetting.dev.yaml
 /scan.py
 /test/rsa.py
+/chroma_data
