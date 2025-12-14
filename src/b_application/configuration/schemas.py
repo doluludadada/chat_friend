@@ -13,7 +13,12 @@ class AppConfig(BaseSettings):
     Defines the configuration schema required by the application.
     """
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        frozen=True,
+    )
     project_root: Path
 
     # -------------------------- AI Model Configuration -------------------------- #
@@ -41,6 +46,10 @@ class AppConfig(BaseSettings):
     log_level: str | int = Field(
         default="INFO",
         description="Logging level for the application (e.g., 'DEBUG', 10).",
+    )
+
+    reset_commands: set[str] = Field(
+        default={"clear"}, description="List of text commands that trigger a conversation reset."
     )
 
     # TODO: Move to somewhere.

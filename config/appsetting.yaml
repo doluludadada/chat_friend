@@ -7,3 +7,10 @@ available_models:
 ai_model_connection_timeout: 600
 
 log_level: INFO
+
+reset_commands:
+  - "清除記憶"
+  - "清除對話"
+  - "!reset"
+  - "/reset"
+  - "/clear"
