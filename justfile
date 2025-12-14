@@ -17,3 +17,9 @@ run:
 
 runui:
     uv run -m src.d_presentation.desktop.app
+
+build-docker:
+    docker build -t chat-friend .
+
+run-docker:
+    docker run -p 8000:8000 --env-file .env chat-friend
