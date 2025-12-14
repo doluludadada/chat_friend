@@ -7,7 +7,6 @@ __pycache__
 *.py[cod]
 *$py.class
 .venv
-uv.lock
 
 # Data & Config
 chroma_data/
