@@ -27,19 +27,33 @@ class AppConfig(BaseSettings):
         default_factory=dict,
         description="Mapping of AI provider to concrete model name/id.",
     )
-    openai_api_key: str | None = Field(default=None, description="API key for OpenAI models.")
-    grok_api_key: str | None = Field(default=None, description="API key for Grok models.")
-    gemini_api_key: str | None = Field(default=None, description="API key for Gemini models.")
-    ai_model_connection_timeout: int = Field(default=60, description="Timeout in seconds for AI model connections.")
-    ai_system_prompt: str | None = Field(default=None, description="The system prompt defining the AI personality.")
+    openai_api_key: str | None = Field(
+        default=None, description="API key for OpenAI models."
+    )
+    grok_api_key: str | None = Field(
+        default=None, description="API key for Grok models."
+    )
+    gemini_api_key: str | None = Field(
+        default=None, description="API key for Gemini models."
+    )
+    ai_model_connection_timeout: int = Field(
+        default=60, description="Timeout in seconds for AI model connections."
+    )
+    ai_system_prompt: str | None = Field(
+        default=None, description="The system prompt defining the AI personality."
+    )
 
     # --------------------- Messaging Platform Configuration --------------------- #
 
-    line_channel_id: str | None = Field(default=None, description="Access token for the LINE Messaging API.")
+    line_channel_id: str | None = Field(
+        default=None, description="Access token for the LINE Messaging API."
+    )
     line_channel_secret: str | None = Field(
         default=None, description="Secret for LINE Messaging API webhook validation."
     )
-    line_channel_access_token: str | None = Field(default=None, description="Access token for the LINE Messaging API.")
+    line_channel_access_token: str | None = Field(
+        default=None, description="Access token for the LINE Messaging API."
+    )
 
     # --------------------------- Application Behavior --------------------------- #
 
@@ -47,6 +61,22 @@ class AppConfig(BaseSettings):
         default="INFO",
         description="Logging level for the application (e.g., 'DEBUG', 10).",
     )
+    enable_web_search: bool = Field(
+        default=False, description="Enable native web search for supported models."
+    )
+    enable_x_search: bool = Field(
+        default=False, description="Enable X (Twitter) search. Only for Grok."
+    )
+    enable_inline_citations: bool = Field(
+        default=True, description="Request inline citations (e.g. [1]) in responses."
+    )
+    web_search_max_results: int = Field(
+        default=2, ge=1, le=5, description="Max sources to retrieve per search."
+    )
+    web_search_allowed_domains: set[str] | None = Field(default=None)
+    web_search_excluded_domains: set[str] | None = Field(default=None)
+    x_search_allowed_handles: set[str] | None = Field(default=None)
+    x_search_excluded_handles: set[str] | None = Field(default=None)
 
     # ---------------------------------------------------------------------------- #
     #                                  DB Setting                                  #
@@ -54,10 +84,13 @@ class AppConfig(BaseSettings):
     database_provider: DatabaseProvider = Field(
         default=DatabaseProvider.MEMORY, description="The persistence layer to use."
     )
-    chroma_persist_path: str = Field(default="chroma_db", description="Path to store ChromaDB data locally.")
+    chroma_persist_path: str = Field(
+        default="chroma_db", description="Path to store ChromaDB data locally."
+    )
 
     reset_commands: set[str] = Field(
-        default={"clear"}, description="List of text commands that trigger a conversation reset."
+        default={"clear"},
+        description="List of text commands that trigger a conversation reset.",
     )
 
     # TODO: Move to somewhere.

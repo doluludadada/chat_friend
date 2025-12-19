@@ -1,4 +1,4 @@
-active_model: gemini
+active_model: grok
 ai_model_connection_timeout: 600
 available_models:
   grok: grok-4-1-fast-non-reasoning
@@ -7,6 +7,14 @@ available_models:
 chroma_persist_path: ./chroma_data
 database_provider: chroma
 log_level: INFO
+
+enable_web_search: true
+enable_x_search: true
+enable_inline_citations: true
+web_search_allowed_domains:
+  -
+x_search_allowed_handles:
+  -
 
 reset_commands:
   - "清除記憶"
