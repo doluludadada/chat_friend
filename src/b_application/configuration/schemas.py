@@ -36,6 +36,9 @@ class AppConfig(BaseSettings):
     gemini_api_key: str | None = Field(
         default=None, description="API key for Gemini models."
     )
+    groq_api_key: str | None = Field(
+        default=None, description="API Key for Groq models."
+    )
     ai_model_connection_timeout: int = Field(
         default=60, description="Timeout in seconds for AI model connections."
     )

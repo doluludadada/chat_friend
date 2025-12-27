@@ -5,6 +5,7 @@ from src.b_application.configuration.schemas import AppConfig
 from src.c_infrastructure.ai_models.ai_adapter.grok_adapter import GrokAdapter
 from src.c_infrastructure.ai_models.ai_adapter.openai_adapter import OpenAIAdapter
 from src.c_infrastructure.ai_models.ai_adapter.gemini_adapter import GeminiAIAdapter
+from src.c_infrastructure.ai_models.ai_adapter.groq_adapter import GroqAIAdapter
 
 
 class AiAdapterFactory:
@@ -47,6 +48,13 @@ class AiAdapterFactory:
 
         if provider == AiProvider.GEMINI:
             return GeminiAIAdapter(
+                config=self._config,
+                logger=self._logger,
+                model_name=model_name,
+            )
+        
+        if provider == AiProvider.GROQ:
+            return GroqAIAdapter(
                 config=self._config,
                 logger=self._logger,
                 model_name=model_name,

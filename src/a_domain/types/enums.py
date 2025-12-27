@@ -11,6 +11,7 @@ class AiProvider(StrEnum):
     OPENAI = "openai"
     GROK = "grok"
     GEMINI = "gemini"
+    GROQ = "groq"
 
 
 class DatabaseProvider(StrEnum):
