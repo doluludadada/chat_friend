@@ -5,6 +5,7 @@ from src.a_domain.ports.bussiness.ai_port import AiPort
 from src.a_domain.ports.bussiness.chat_styler_port import IChatStylerPort
 from src.a_domain.ports.bussiness.platform_port import PlatformPort
 from src.a_domain.ports.bussiness.repository_port import RepositoryPort
+from src.a_domain.ports.bussiness.web_search_port import WebSearchPort
 
 # Ports
 from src.a_domain.ports.notification.logging_port import ILoggingPort
@@ -30,6 +31,7 @@ from src.c_infrastructure.persistence.inmemory_repository import (
 from src.c_infrastructure.platforms.line.line_adapter import LinePlatformAdapter
 from src.c_infrastructure.platforms.line.line_handler import LineWebhookHandler
 from src.c_infrastructure.platforms.line.line_security import LineSecurityService
+from src.c_infrastructure.search.tavily_search_adapter import TavilySearchAdapter
 from src.c_infrastructure.services.chat_styler_service import ChatStylerService
 from src.c_infrastructure.services.logger_service import LoggerService
 
@@ -77,10 +79,22 @@ def get_platform_adapter() -> PlatformPort:
 
 
 @lru_cache
+def get_web_search() -> WebSearchPort | None:
+    settings = get_settings()
+    logger = get_logger()
+    
+    if not settings.tavily_api_key:
+        logger.debug("Tavily API key not configured. Web search disabled.")
+        return None
+    
+    return TavilySearchAdapter(config=settings, logger=logger)
+
+@lru_cache
 def get_ai_adapter() -> AiPort:
     settings = get_settings()
     logger = get_logger()
-    factory = AiAdapterFactory(config=settings, logger=logger)
+    web_search = get_web_search()
+    factory = AiAdapterFactory(config=settings, logger=logger, web_search=web_search)
     return factory.create_adapter()
 
 

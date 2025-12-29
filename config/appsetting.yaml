@@ -12,9 +12,13 @@ log_level: INFO
 enable_web_search: true
 enable_x_search: true
 enable_inline_citations: true
+web_search_max_results: 3
 web_search_allowed_domains: []
-  
+
 x_search_allowed_handles: []
+
+# Tavily Search Configuration
+tavily_search_depth: "basic"  # "basic" or "advanced"
 
 reset_commands:
   - "清除記憶"

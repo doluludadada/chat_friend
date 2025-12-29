@@ -31,6 +31,8 @@ def load_settings(config_path: Path | None = None, instruction_path: Path | None
 
     if "system_prompt" in final_config_data:
         final_config_data["ai_system_prompt"] = final_config_data.pop("system_prompt")
+    if "rag_injection_prompt" in final_config_data:
+        final_config_data["ai_rag_injection_prompt"] = final_config_data.pop("rag_injection_prompt")
     return AppConfig(project_root=project_root, **final_config_data)
 
 

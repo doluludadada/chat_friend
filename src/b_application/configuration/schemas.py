@@ -45,6 +45,11 @@ class AppConfig(BaseSettings):
     ai_system_prompt: str | None = Field(
         default=None, description="The system prompt defining the AI personality."
     )
+    ai_rag_injection_prompt: str | None = Field(
+        default=None,
+        description="System prompt template for injecting web search context (supports {search_results}).",
+    )
+
 
     # --------------------- Messaging Platform Configuration --------------------- #
 
@@ -116,3 +121,16 @@ class AppConfig(BaseSettings):
             raise KeyError(
                 f"No model mapping for active_model={self.active_model!s}. Please configure available_models."
             ) from exc
+
+    # =====================
+    # Tavily (implementation for web search)
+    # =====================
+    tavily_api_key: str | None = Field(
+        default=None,
+        description="Tavily API key for web search.",
+    )
+    
+    tavily_search_depth: str = Field(
+        default="basic",
+        description="Tavily search depth: 'basic' or 'advanced'.",
+    )

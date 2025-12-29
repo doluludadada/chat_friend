@@ -1,4 +1,5 @@
 from src.a_domain.ports.bussiness.ai_port import AiPort
+from src.a_domain.ports.bussiness.web_search_port import WebSearchPort
 from src.a_domain.ports.notification.logging_port import ILoggingPort
 from src.a_domain.types.enums import AiProvider
 from src.b_application.configuration.schemas import AppConfig
@@ -13,9 +14,10 @@ class AiAdapterFactory:
     Factory class responsible for creating AI model adapter instances based on configuration.
     """
 
-    def __init__(self, config: AppConfig, logger: ILoggingPort):
+    def __init__(self, config: AppConfig, logger: ILoggingPort, web_search: WebSearchPort | None = None):
         self._config = config
         self._logger = logger
+        self._web_search = web_search
         self._logger.trace(f"AI Adapter Factory initialised. Active model provider: {self._config.active_model.value}")
 
     def create_adapter(
@@ -58,5 +60,6 @@ class AiAdapterFactory:
                 config=self._config,
                 logger=self._logger,
                 model_name=model_name,
+                web_search=self._web_search,
             )
         raise ValueError(f"Unsupported provider: {provider!s}")

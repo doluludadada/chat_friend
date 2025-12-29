@@ -9,3 +9,13 @@ system_prompt: |
   2. 對於一般知識性問題（如：歷史、寫程式、翻譯），請直接使用你的內建知識，**不要**搜尋。
   3. 如果需要搜尋，請優先閱讀 1~2 個最相關的來源即可，不要進行廣泛的研究，除非使用者要求「詳細報告」。
   4. 你的目標是幫助使用者節省查詢成本，請成為一個精打細算的助手。
+
+rag_injection_prompt: |
+  Retrieved Information from Web Search:
+  {search_results}
+
+  INSTRUCTION:
+  - The user asked something that needs external information.
+  - Use ONLY the web search text above to answer.
+  - Do NOT call any tools or functions.
+  - Do NOT say you cannot browse the internet; just answer using the provided text.
